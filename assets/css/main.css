@@ -46,3 +46,44 @@ h1{
     cursor: pointer;
 }
 
+
+.laps{
+    width: 50%;
+    float: left;
+}
+
+.history{
+    display: none;
+    width: 50%;
+    float: left;
+}
+
+h2{
+    font-weight: 700;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+ul{
+    columns: 3;
+    -webkit-columns: 3;       /* Chrome, Safari, Opera */
+    -moz-columns: 3;          /* Firefox */
+    -webkit-column-gap: 5px; /* Chrome, Safari, Opera */
+    -moz-column-gap: 5px;    /* Firefox */
+     column-gap: 5px;
+     list-style-position: inside;
+     
+     padding: 10px;
+     list-style: none;
+     font-size: 20px;
+     color: #111;
+  }
+
+/* #displaylap li{
+    padding: 10px;
+    list-style: none;
+    font-size: 20px;
+    color: #111;
+} */
