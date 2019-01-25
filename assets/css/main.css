@@ -1,0 +1,48 @@
+body{
+    font-family: 'ZCOOL KuaiLe', cursive;
+    background: #333;
+}
+
+h1{
+    font-weight: 700;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.container{
+    height: 300px;
+    width: 100%;
+}
+
+#display{
+    width: 100%;
+    font-size: 150px;
+    text-align: center;
+    margin: 0px auto;
+    color: #CDDC39;
+    text-shadow: 0 0 28px #CDDC39;
+    letter-spacing: 20px;
+}
+
+.buttons{
+    text-align: center;
+    margin: 50px 0;   
+}
+
+.btn{
+    padding: 10px 12px;
+    min-width: 100px;
+    margin: 10px;
+    background: #272727;
+    outline: 0;
+    border: solid 1px #222;
+    color: #CDDC39;
+    font-family: inherit;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase; 
+    cursor: pointer;
+}
+
