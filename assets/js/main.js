@@ -100,3 +100,61 @@ function stop(){
     startStop();
 }
 
+
+function startStop(){
+    if(timerStatus === "started"){
+        interval = window.setInterval(stopwatch,1000);
+        //document.getElementById("startStop").innerHTML = "Stop";
+        //timerStatus = "started";
+        historyLock = 0;
+        lapLock = 0;
+    }else if(timerStatus === "stopped"){
+        window.clearInterval(interval);
+        //document.getElementById("startStop").innerHTML = "Start";
+        //timerStatus = "stopped";
+    }
+}
+
+function pause(){
+    document.getElementById("start").innerHTML = "Resume";
+    document.getElementById("start").setAttribute("style","visibility:visible");
+    document.getElementById("pause").setAttribute("style","visibility:hidden");
+    document.getElementById("stop").setAttribute("style","visibility:visible");
+    timerStatus = "stopped";
+    window.clearInterval(interval);
+}
+
+function showHistory(){
+    if(isHistoryVisible==="false"){
+        document.getElementById("divHistory").style.display = "block";
+        isHistoryVisible = "true";
+    }else{
+        document.getElementById("divHistory").style.display = "none";
+        isHistoryVisible = "false";
+    }
+    
+}
+
+function reset(){
+    window.clearInterval(interval);
+    interval = null;
+    timerStatus = "stopped";
+    if(historyLock === 0){
+        var output =+ displayhours+":"+displayminutes+":"+displayseconds;
+        historyarr.push(output);
+        saveHistoryintoLS(historyarr);
+        printHistory();
+        historyLock = 1;
+    }
+    lapLock = 1;
+    seconds = hours = minutes = 0;
+    
+    laps = [];
+    document.getElementById("display").innerHTML = "00:00:00";
+    document.getElementById("start").innerHTML = "Start";
+    document.getElementById("displaylap").innerHTML = "";
+    document.getElementById("start").setAttribute("style","visibility:visible");
+    document.getElementById("pause").setAttribute("style","visibility:visible");
+    document.getElementById("stop").setAttribute("style","visibility:hidden");
+    localStorage.clear();
+}
