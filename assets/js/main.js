@@ -31,3 +31,54 @@ var lapLock = 0;
 var interval = null;
 var timerStatus = localStorage.getItem("timerStatus");
 var isHistoryVisible = "false";
+
+function stopwatch(){
+    seconds++;
+    if( seconds === 60){
+        minutes++;
+        seconds = 0;
+
+        if( minutes === 60){
+            hours++;
+            minutes = 0;
+
+            if( hours/24 === 1){
+                seconds = 0;
+                minutes = 0;
+                hours = 0;
+            }
+
+        }else if( minutes > 60){
+            while( minutes > 60){
+                minutes -= 60;
+                hours++;
+            }
+        }
+    }else if( seconds > 60){
+        while(seconds > 60){
+            seconds -= 60;
+            minutes++;
+        }
+    }
+    
+    if(seconds < 10){
+        displayseconds = "0" + seconds.toString();
+    }else{
+        displayseconds = seconds;
+    }
+
+    if(minutes < 10){
+        displayminutes = "0" + minutes.toString();
+    }else{
+        displayminutes = minutes;
+    }
+
+    if(hours < 10){
+        displayhours = "0" + hours.toString();
+    }else{
+        displayhours = hours;
+    }
+
+    document.getElementById("display").innerHTML = displayhours+":"+displayminutes+":"+displayseconds;
+
+}
