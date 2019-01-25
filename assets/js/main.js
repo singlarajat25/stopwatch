@@ -200,3 +200,25 @@ function printLaps(){
     }
 }
 
+window.onbeforeunload = function () {
+    seconds = parseInt(displayseconds);
+    minutes = parseInt(displayminutes);
+    hours = parseInt(displayhours);
+    localStorage.setItem("secs", seconds);
+    localStorage.setItem("mins", minutes);
+    localStorage.setItem("hrs", hours);
+    localStorage.setItem("timeOnClock", new Date());
+    localStorage.setItem("timerStatus",timerStatus);
+    return "";
+};
+
+window.onload = function(){
+    
+    var timeOnClock = localStorage.getItem("timeOnClock");
+    seconds += parseInt((new Date() - new Date(timeOnClock))/1000);
+    console.log(parseInt((new Date() - new Date(timeOnClock))/1000));
+    console.log(seconds);
+    startStop();
+
+    
+}
