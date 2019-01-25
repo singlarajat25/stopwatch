@@ -82,3 +82,21 @@ function stopwatch(){
     document.getElementById("display").innerHTML = displayhours+":"+displayminutes+":"+displayseconds;
 
 }
+
+function start(){
+    timerStatus = "started";
+    document.getElementById("start").setAttribute("style","visibility:hidden");
+    document.getElementById("stop").setAttribute("style","visibility:visible");
+    document.getElementById("pause").setAttribute("style","visibility:visible");
+    startStop();
+}
+
+function stop(){
+    timerStatus = "stopped";
+    document.getElementById("start").setAttribute("style","visibility:visible");
+    document.getElementById("stop").setAttribute("style","visibility:hidden");
+    document.getElementById("pause").setAttribute("style","visibility:visible");
+    document.getElementById("start").innerHTML = "Start";
+    startStop();
+}
+
