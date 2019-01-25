@@ -158,3 +158,45 @@ function reset(){
     document.getElementById("stop").setAttribute("style","visibility:hidden");
     localStorage.clear();
 }
+
+
+function saveHistoryintoLS(historyarr){
+    localStorage.setItem("historyarr",JSON.stringify(historyarr));
+}
+
+function getHistoryfromLS(){
+    if(!localStorage.historyarr){
+        localStorage.historyarr = JSON.stringify([]);
+    }return JSON.parse(localStorage.historyarr);
+}
+
+function printHistory(){
+    if(historyLock === 0){
+        document.getElementById("historyList").innerHTML = "";
+        historyarr.forEach(function(his){
+            var li = document.createElement("li");
+            li.textContent = his;
+            document.getElementById("historyList").appendChild(li);
+        });
+    }
+}
+
+function lap(){
+    if(lapLock === 0){
+        var output =+ displayhours+":"+displayminutes+":"+displayseconds;
+        laps.push(output);
+        printLaps();
+    }
+}
+
+function printLaps(){
+    if(lapLock === 0){
+        document.getElementById("displaylap").innerHTML = "";
+        laps.forEach(function(lap){
+            var li = document.createElement("li");
+            li.textContent = lap;
+            document.getElementById("displaylap").appendChild(li);
+        });
+    }
+}
+
