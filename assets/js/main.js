@@ -229,6 +229,8 @@ window.onbeforeunload = function () {
     localStorage.setItem("hrs", hours);
     if(!resetFlag){
         localStorage.setItem("timeOnClock", new Date());
+    }else{
+        localStorage.removeItem("timeOnClock");
     }
     localStorage.setItem("timerStatus",timerStatus);
     return "";
