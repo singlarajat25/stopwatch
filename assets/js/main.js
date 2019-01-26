@@ -22,6 +22,12 @@ if(!localStorage.timerStatus){
     var timerStatus = localStorage.getItem("timerStatus");
 }
 
+if(!localStorage.historyLock){
+    var historyLock = 0;
+}else{
+    var historyLock = localStorage.getItem("historyLock");
+}
+
 var laps = getLapsfromLS();
 var historyarr = getHistoryfromLS();
 var resetFlag = parseInt(localStorage.getItem("resetFlag"));
@@ -34,7 +40,6 @@ var displayhours = 0;
 var displayminutes = 0;
 var displayseconds = 0;
 
-var historyLock = 0;
 var lapLock = 0;
 var interval = null;
 var isHistoryVisible = "false";
@@ -95,7 +100,6 @@ function start(){
     resetFlag = 0;
     document.getElementById("start").setAttribute("style","visibility:hidden");
     document.getElementById("pause").setAttribute("style","visibility:visible");
-    //document.getElementById("pause").setAttribute("style","visibility:visible");
     startStop();
 }
 
@@ -104,8 +108,6 @@ function pause(){
     document.getElementById("start").innerHTML = "Resume";
     document.getElementById("start").setAttribute("style","visibility:visible");
     document.getElementById("pause").setAttribute("style","visibility:hidden");
-    //document.getElementById("pause").setAttribute("style","visibility:visible");
-    //document.getElementById("start").innerHTML = "Start";
     lapLock = 1;
     resetFlag = 1;
     localStorage.setItem("resetFlag",resetFlag);
@@ -115,14 +117,10 @@ function pause(){
 function startStop(){
     if(timerStatus === "started"){
         interval = window.setInterval(stopwatch,1000);
-        //document.getElementById("startStop").innerHTML = "Stop";
-        //timerStatus = "started";
         historyLock = 0;
         lapLock = 0;
     }else if(timerStatus === "stopped"){
         window.clearInterval(interval);
-        //document.getElementById("startStop").innerHTML = "Start";
-        //timerStatus = "stopped";
     }
 }
 
@@ -134,7 +132,8 @@ function showHistory(){
         document.getElementById("divHistory").style.display = "none";
         isHistoryVisible = "false";
     }
-    
+    historyLock = 0;
+    printHistory();    
 }
 
 function reset(){
@@ -156,7 +155,6 @@ function reset(){
     document.getElementById("start").innerHTML = "Start";
     document.getElementById("displaylap").innerHTML = "";
     document.getElementById("start").setAttribute("style","visibility:visible");
-    //document.getElementById("pause").setAttribute("style","visibility:visible");
     document.getElementById("pause").setAttribute("style","visibility:hidden");
     localStorage.removeItem("secs");
     localStorage.removeItem("mins");
@@ -187,6 +185,14 @@ function printHistory(){
             document.getElementById("historyList").appendChild(li);
         });
     }
+}
+
+function clearHistory(){
+    historyarr =[];
+    localStorage.removeItem("historyarr");
+    document.getElementById("historyList").innerHTML = "";
+    historyLock = 1;
+    localStorage.setItem("historyLock",historyLock);
 }
 
 function lap(){
