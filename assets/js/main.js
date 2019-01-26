@@ -1,20 +1,30 @@
 if(!localStorage.secs){
-    localStorage.secs = 0;
+    var seconds = 0;
 }else{
     var seconds = parseInt(localStorage.getItem("secs"));
 }
 
-if(!localStorage.getItem("mins")){
+if(!localStorage.mins){
     var minutes = 0;
 }else{
     var minutes = parseInt(localStorage.getItem("mins"));
 }
 
-if(!localStorage.getItem("hrs")){
+if(!localStorage.hrs){
     var hours = 0;
 }else{
     var hours = parseInt(localStorage.getItem("hrs"));
 }
+
+if(!localStorage.timerStatus){
+    var timerStatus = null;
+}else{
+    var timerStatus = localStorage.getItem("timerStatus");
+}
+
+var laps = getLapsfromLS();
+var historyarr = getHistoryfromLS();
+var resetFlag = parseInt(localStorage.getItem("resetFlag"));
 
 console.log(seconds);
 console.log(minutes);
@@ -23,13 +33,10 @@ console.log(hours);
 var displayhours = 0;
 var displayminutes = 0;
 var displayseconds = 0;
-var laps = [];
-var historyarr = getHistoryfromLS();
+
 var historyLock = 0;
 var lapLock = 0;
-
 var interval = null;
-var timerStatus = localStorage.getItem("timerStatus");
 var isHistoryVisible = "false";
 
 function stopwatch(){
@@ -85,21 +92,25 @@ function stopwatch(){
 
 function start(){
     timerStatus = "started";
+    resetFlag = 0;
     document.getElementById("start").setAttribute("style","visibility:hidden");
-    document.getElementById("stop").setAttribute("style","visibility:visible");
     document.getElementById("pause").setAttribute("style","visibility:visible");
+    //document.getElementById("pause").setAttribute("style","visibility:visible");
     startStop();
 }
 
-function stop(){
+function pause(){
     timerStatus = "stopped";
+    document.getElementById("start").innerHTML = "Resume";
     document.getElementById("start").setAttribute("style","visibility:visible");
-    document.getElementById("stop").setAttribute("style","visibility:hidden");
-    document.getElementById("pause").setAttribute("style","visibility:visible");
-    document.getElementById("start").innerHTML = "Start";
+    document.getElementById("pause").setAttribute("style","visibility:hidden");
+    //document.getElementById("pause").setAttribute("style","visibility:visible");
+    //document.getElementById("start").innerHTML = "Start";
+    lapLock = 1;
+    resetFlag = 1;
+    localStorage.setItem("resetFlag",resetFlag);
     startStop();
 }
-
 
 function startStop(){
     if(timerStatus === "started"){
@@ -113,15 +124,6 @@ function startStop(){
         //document.getElementById("startStop").innerHTML = "Start";
         //timerStatus = "stopped";
     }
-}
-
-function pause(){
-    document.getElementById("start").innerHTML = "Resume";
-    document.getElementById("start").setAttribute("style","visibility:visible");
-    document.getElementById("pause").setAttribute("style","visibility:hidden");
-    document.getElementById("stop").setAttribute("style","visibility:visible");
-    timerStatus = "stopped";
-    window.clearInterval(interval);
 }
 
 function showHistory(){
@@ -138,7 +140,7 @@ function showHistory(){
 function reset(){
     window.clearInterval(interval);
     interval = null;
-    timerStatus = "stopped";
+    timerStatus = "reset";
     if(historyLock === 0){
         var output =+ displayhours+":"+displayminutes+":"+displayseconds;
         historyarr.push(output);
@@ -154,11 +156,17 @@ function reset(){
     document.getElementById("start").innerHTML = "Start";
     document.getElementById("displaylap").innerHTML = "";
     document.getElementById("start").setAttribute("style","visibility:visible");
-    document.getElementById("pause").setAttribute("style","visibility:visible");
-    document.getElementById("stop").setAttribute("style","visibility:hidden");
-    localStorage.clear();
+    //document.getElementById("pause").setAttribute("style","visibility:visible");
+    document.getElementById("pause").setAttribute("style","visibility:hidden");
+    localStorage.removeItem("secs");
+    localStorage.removeItem("mins");
+    localStorage.removeItem("hrs");
+    localStorage.removeItem("timerStatus");
+    localStorage.removeItem("timeOnClock");
+    localStorage.removeItem("laps");
+    resetFlag = 1;
+    localStorage.setItem("resetFlag",resetFlag);
 }
-
 
 function saveHistoryintoLS(historyarr){
     localStorage.setItem("historyarr",JSON.stringify(historyarr));
@@ -185,8 +193,19 @@ function lap(){
     if(lapLock === 0){
         var output =+ displayhours+":"+displayminutes+":"+displayseconds;
         laps.push(output);
+        saveLapsIntoLS(laps);
         printLaps();
     }
+}
+
+function getLapsfromLS(){
+    if(!localStorage.laps){
+        localStorage.laps  = JSON.stringify([]);
+    }return JSON.parse(localStorage.laps);
+}
+
+function saveLapsIntoLS(laps){
+    localStorage.setItem("laps",JSON.stringify(laps));
 }
 
 function printLaps(){
@@ -200,6 +219,7 @@ function printLaps(){
     }
 }
 
+
 window.onbeforeunload = function () {
     seconds = parseInt(displayseconds);
     minutes = parseInt(displayminutes);
@@ -207,18 +227,33 @@ window.onbeforeunload = function () {
     localStorage.setItem("secs", seconds);
     localStorage.setItem("mins", minutes);
     localStorage.setItem("hrs", hours);
-    localStorage.setItem("timeOnClock", new Date());
+    if(!resetFlag){
+        localStorage.setItem("timeOnClock", new Date());
+    }
     localStorage.setItem("timerStatus",timerStatus);
     return "";
 };
 
 window.onload = function(){
     
-    var timeOnClock = localStorage.getItem("timeOnClock");
-    seconds += parseInt((new Date() - new Date(timeOnClock))/1000);
+    if(!localStorage.timeOnClock){
+        var timeOnClock = 0;
+    }else{
+        var timeOnClock = localStorage.getItem("timeOnClock");
+    }
+    if(timeOnClock){
+        seconds += parseInt((new Date() - new Date(timeOnClock))/1000);
+    }
     console.log(parseInt((new Date() - new Date(timeOnClock))/1000));
     console.log(seconds);
-    startStop();
-
-    
+    console.log(timerStatus);
+    printHistory(historyarr);
+    printLaps(laps);
+    if( timerStatus === "started" ){
+        start();
+    }else if( timerStatus === "stopped" ){
+        pause();
+    }else{
+        reset();
+    }
 }
