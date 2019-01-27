@@ -1,48 +1,38 @@
-if (!localStorage.secs) {
-    var seconds = 0;
-} else {
-    var seconds = parseInt(localStorage.getItem("secs"));
-}
-
-if (!localStorage.mins) {
-    var minutes = 0;
-} else {
-    var minutes = parseInt(localStorage.getItem("mins"));
-}
-
-if (!localStorage.hrs) {
-    var hours = 0;
-} else {
-    var hours = parseInt(localStorage.getItem("hrs"));
-}
-
-if (!localStorage.timerStatus) {
-    var timerStatus = null;
-} else {
-    var timerStatus = localStorage.getItem("timerStatus");
-}
-
-if (!localStorage.historyLock) {
-    var historyLock = 0;
-} else {
-    var historyLock = localStorage.getItem("historyLock");
-}
-
+var seconds = 0;
+var minutes = 0;
+var hours = 0;
+var timerStatus = null;
+var historyLock = false;
+var displayHours = 0;
+var displayMinutes = 0;
+var displaySeconds = 0;
+var lapLock = false;
+var interval = null;
+var isHistoryVisible = false;
 var laps = getLapsfromLS();
 var historyArr = getHistoryfromLS();
 var resetFlag = parseInt(localStorage.getItem("resetFlag"));
 
-console.log(seconds);
-console.log(minutes);
-console.log(hours);
 
-var displayHours = 0;
-var displayMinutes = 0;
-var displaySeconds = 0;
+if (localStorage.secs) {
+    seconds = parseInt(localStorage.getItem("secs"));
+}
 
-var lapLock = 0;
-var interval = null;
-var isHistoryVisible = "false";
+if (localStorage.mins) {
+    minutes = parseInt(localStorage.getItem("mins"));
+}
+
+if (localStorage.hrs) {
+    hours = parseInt(localStorage.getItem("hrs"));
+} 
+
+if (localStorage.timerStatus) {
+    timerStatus = localStorage.getItem("timerStatus");
+}
+
+if (localStorage.historyLock) {
+    historyLock = localStorage.getItem("historyLock");
+}
 
 function stopWatch() {
     seconds++;
@@ -97,19 +87,19 @@ function stopWatch() {
 
 function start() {
     timerStatus = "started";
-    resetFlag = 0;
-    document.getElementById("start").setAttribute("style", "visibility:hidden");
-    document.getElementById("pause").setAttribute("style", "visibility:visible");
+    resetFlag = false;
+    document.getElementById("start").style.display = "none";
+    document.getElementById("pause").style.display = "inline-block";
     startStop();
 }
 
 function pause() {
     timerStatus = "stopped";
     document.getElementById("start").innerHTML = "Resume";
-    document.getElementById("start").setAttribute("style", "visibility:visible");
-    document.getElementById("pause").setAttribute("style", "visibility:hidden");
-    lapLock = 1;
-    resetFlag = 1;
+    document.getElementById("start").style.display = "inline-block";
+    document.getElementById("pause").style.display = "none";
+    lapLock = true;
+    resetFlag = true;
     localStorage.setItem("resetFlag", resetFlag);
     startStop();
 }
@@ -117,22 +107,22 @@ function pause() {
 function startStop() {
     if (timerStatus === "started") {
         interval = window.setInterval(stopWatch, 1000);
-        historyLock = 0;
-        lapLock = 0;
+        historyLock = false;
+        lapLock = false;
     } else if (timerStatus === "stopped") {
         window.clearInterval(interval);
     }
 }
 
 function showHistory() {
-    if (isHistoryVisible === "false") {
+    if (!isHistoryVisible) {
         document.getElementById("divHistory").style.display = "block";
-        isHistoryVisible = "true";
+        isHistoryVisible = true;
     } else {
         document.getElementById("divHistory").style.display = "none";
-        isHistoryVisible = "false";
+        isHistoryVisible = false;
     }
-    historyLock = 0;
+    historyLock = false;
     printHistory();
 }
 
@@ -140,29 +130,35 @@ function reset() {
     window.clearInterval(interval);
     interval = null;
     timerStatus = "reset";
-    if (historyLock === 0) {
+    if (!historyLock) {
         var output = + displayHours + ":" + displayMinutes + ":" + displaySeconds;
-        historyArr.push(output);
+        if(historyArr.length === 10){
+            historyArr.splice(0,1);
+            historyArr.push(output);
+
+        }else{
+            historyArr.push(output);
+        }
         saveHistoryintoLS(historyArr);
         printHistory();
-        historyLock = 1;
+        historyLock = true;
     }
-    lapLock = 1;
+    lapLock = true;
     seconds = hours = minutes = 0;
 
     laps = [];
     document.getElementById("display").innerHTML = "00:00:00";
     document.getElementById("start").innerHTML = "Start";
     document.getElementById("displaylap").innerHTML = "";
-    document.getElementById("start").setAttribute("style", "visibility:visible");
-    document.getElementById("pause").setAttribute("style", "visibility:hidden");
+    document.getElementById("start").style.display = "inline-block";
+    document.getElementById("pause").style.display = "none";
     localStorage.removeItem("secs");
     localStorage.removeItem("mins");
     localStorage.removeItem("hrs");
     localStorage.removeItem("timerStatus");
     localStorage.removeItem("timeOnClock");
     localStorage.removeItem("laps");
-    resetFlag = 1;
+    resetFlag = true;
     localStorage.setItem("resetFlag", resetFlag);
 }
 
@@ -177,7 +173,7 @@ function getHistoryfromLS() {
 }
 
 function printHistory() {
-    if (historyLock === 0) {
+    if (!historyLock) {
         document.getElementById("historyList").innerHTML = "";
         historyArr.forEach(function (his) {
             var li = document.createElement("li");
@@ -192,15 +188,15 @@ function clearHistory() {
     localStorage.removeItem("historyArr");
     document.getElementById("historyList").innerHTML = "";
     if(timerStatus === "started"){
-        historyLock = 0;
+        historyLock = false;
     }else{
-        historyLock = 1;
+        historyLock = true;
     }
     localStorage.setItem("historyLock", historyLock);
 }
 
 function lap() {
-    if (lapLock === 0) {
+    if (!lapLock) {
         var output = + displayHours + ":" + displayMinutes + ":" + displaySeconds;
         laps.push(output);
         saveLapsIntoLS(laps);
@@ -219,7 +215,7 @@ function saveLapsIntoLS(laps) {
 }
 
 function printLaps() {
-    if (lapLock === 0) {
+    if (!lapLock) {
         document.getElementById("displaylap").innerHTML = "";
         laps.forEach(function (lap) {
             var li = document.createElement("li");
@@ -228,7 +224,6 @@ function printLaps() {
         });
     }
 }
-
 
 window.onbeforeunload = function () {
     seconds = parseInt(displaySeconds);
@@ -244,7 +239,7 @@ window.onbeforeunload = function () {
     }
     localStorage.setItem("timerStatus", timerStatus);
     return "";
-};
+}
 
 window.onload = function () {
 
