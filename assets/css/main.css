@@ -1,6 +1,9 @@
 body{
     font-family: 'ZCOOL KuaiLe', cursive;
     background: #333;
+    background: url(bg.jpg);
+    background-attachment: FIXED;
+    background-size: cover;
 }
 
 h1{
@@ -65,17 +68,8 @@ h2{
     letter-spacing: 5px;
 }
 
-ul{
-    columns: 3;
-    -webkit-columns: 3;       /* Chrome, Safari, Opera */
-    -moz-columns: 3;          /* Firefox */
-    -webkit-column-gap: 5px; /* Chrome, Safari, Opera */
-    -moz-column-gap: 5px;    /* Firefox */
-     column-gap: 5px;
-     list-style-position: inside;
-     
-     padding: 10px;
-     list-style: none;
+ol{
+     padding: 0 50px; 
      font-size: 20px;
      color: #CDDC39;
   }
