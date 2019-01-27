@@ -29,16 +29,12 @@ if(!localStorage.historyLock){
 }
 
 var laps = getLapsfromLS();
-var historyarr = getHistoryfromLS();
+var historyArr = getHistoryfromLS();
 var resetFlag = parseInt(localStorage.getItem("resetFlag"));
 
-console.log(seconds);
-console.log(minutes);
-console.log(hours);
-
-var displayhours = 0;
-var displayminutes = 0;
-var displayseconds = 0;
+var displayHours = 0;
+var displayMinutes = 0;
+var displaySeconds = 0;
 
 var lapLock = 0;
 var interval = null;
@@ -74,24 +70,24 @@ function stopwatch(){
     }
     
     if(seconds < 10){
-        displayseconds = "0" + seconds.toString();
+        displaySeconds = "0" + seconds.toString();
     }else{
-        displayseconds = seconds;
+        displaySeconds = seconds;
     }
 
     if(minutes < 10){
-        displayminutes = "0" + minutes.toString();
+        displayMinutes = "0" + minutes.toString();
     }else{
-        displayminutes = minutes;
+        displayMinutes = minutes;
     }
 
     if(hours < 10){
-        displayhours = "0" + hours.toString();
+        displayHours = "0" + hours.toString();
     }else{
-        displayhours = hours;
+        displayHours = hours;
     }
 
-    document.getElementById("display").innerHTML = displayhours+":"+displayminutes+":"+displayseconds;
+    document.getElementById("display").innerHTML = displayHours+":"+displayMinutes+":"+displaySeconds;
 
 }
 
@@ -141,9 +137,9 @@ function reset(){
     interval = null;
     timerStatus = "reset";
     if(historyLock === 0){
-        var output =+ displayhours+":"+displayminutes+":"+displayseconds;
-        historyarr.push(output);
-        saveHistoryintoLS(historyarr);
+        var output =+ displayHours+":"+displayMinutes+":"+displaySeconds;
+        historyArr.push(output);
+        saveHistoryintoLS(historyArr);
         printHistory();
         historyLock = 1;
     }
@@ -166,20 +162,20 @@ function reset(){
     localStorage.setItem("resetFlag",resetFlag);
 }
 
-function saveHistoryintoLS(historyarr){
-    localStorage.setItem("historyarr",JSON.stringify(historyarr));
+function saveHistoryintoLS(historyArr){
+    localStorage.setItem("historyArr",JSON.stringify(historyArr));
 }
 
 function getHistoryfromLS(){
-    if(!localStorage.historyarr){
-        localStorage.historyarr = JSON.stringify([]);
-    }return JSON.parse(localStorage.historyarr);
+    if(!localStorage.historyArr){
+        localStorage.historyArr = JSON.stringify([]);
+    }return JSON.parse(localStorage.historyArr);
 }
 
 function printHistory(){
     if(historyLock === 0){
         document.getElementById("historyList").innerHTML = "";
-        historyarr.forEach(function(his){
+        historyArr.forEach(function(his){
             var li = document.createElement("li");
             li.textContent = his;
             document.getElementById("historyList").appendChild(li);
@@ -188,8 +184,8 @@ function printHistory(){
 }
 
 function clearHistory(){
-    historyarr =[];
-    localStorage.removeItem("historyarr");
+    historyArr =[];
+    localStorage.removeItem("historyArr");
     document.getElementById("historyList").innerHTML = "";
     historyLock = 1;
     localStorage.setItem("historyLock",historyLock);
@@ -197,7 +193,7 @@ function clearHistory(){
 
 function lap(){
     if(lapLock === 0){
-        var output =+ displayhours+":"+displayminutes+":"+displayseconds;
+        var output =+ displayHours+":"+displayMinutes+":"+displaySeconds;
         laps.push(output);
         saveLapsIntoLS(laps);
         printLaps();
@@ -227,9 +223,9 @@ function printLaps(){
 
 
 window.onbeforeunload = function () {
-    seconds = parseInt(displayseconds);
-    minutes = parseInt(displayminutes);
-    hours = parseInt(displayhours);
+    seconds = parseInt(displaySeconds);
+    minutes = parseInt(displayMinutes);
+    hours = parseInt(displayHours);
     localStorage.setItem("secs", seconds);
     localStorage.setItem("mins", minutes);
     localStorage.setItem("hrs", hours);
@@ -252,10 +248,7 @@ window.onload = function(){
     if(timeOnClock){
         seconds += parseInt((new Date() - new Date(timeOnClock))/1000);
     }
-    console.log(parseInt((new Date() - new Date(timeOnClock))/1000));
-    console.log(seconds);
-    console.log(timerStatus);
-    printHistory(historyarr);
+    printHistory(historyArr);
     printLaps(laps);
     if( timerStatus === "started" ){
         start();
