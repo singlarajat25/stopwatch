@@ -1,3 +1,5 @@
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  VARIABLES  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 var seconds = 0;
 var minutes = 0;
 var hours = 0;
@@ -11,8 +13,9 @@ var interval = null;
 var isHistoryVisible = false;
 var laps = getLapsfromLS();
 var historyArr = getHistoryfromLS();
-var resetFlag = parseInt(localStorage.getItem("resetFlag"));
+var resetFlag = false;
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  LOCAL STORAGE  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 if (localStorage.secs) {
     seconds = parseInt(localStorage.getItem("secs"));
@@ -34,6 +37,13 @@ if (localStorage.historyLock) {
     historyLock = localStorage.getItem("historyLock");
 }
 
+if (localStorage.resetFlag) {
+    resetFlag = localStorage.getItem("resetFlag");
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  FUNCTIONS  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// Function of calculating timer values - 
 function stopWatch() {
     seconds++;
     if (seconds === 60) {
@@ -63,6 +73,7 @@ function stopWatch() {
         }
     }
 
+// Converting timer values into strings to print them on display - 
     if (seconds < 10) {
         displaySeconds = "0" + seconds.toString();
     } else {
@@ -85,28 +96,37 @@ function stopWatch() {
 
 }
 
+// Function to initiate the stopWatch - 
 function start() {
     timerStatus = "started";
     resetFlag = false;
     document.getElementById("start").style.display = "none";
     document.getElementById("pause").style.display = "inline-block";
+    
+    // Calling iterative fuction which is responsibe for running stopwatch continously - 
     startStop();
 }
 
+// Function to stop the stopWatch - 
 function pause() {
     timerStatus = "stopped";
     document.getElementById("start").innerHTML = "Resume";
     document.getElementById("start").style.display = "inline-block";
     document.getElementById("pause").style.display = "none";
+    // Enabling Lap flag to avoid printing of laps on diplay - 
     lapLock = true;
+    // Enabling reset flag to avoid continuatiuon of stopwatch on page reload/browser reload - 
     resetFlag = true;
     localStorage.setItem("resetFlag", resetFlag);
     startStop();
 }
 
+// Function to call stopWatch function repeatedly after every 1 second - 
 function startStop() {
+    // Checking the status of stopWatch to decide start/stop event - 
     if (timerStatus === "started") {
         interval = window.setInterval(stopWatch, 1000);
+        // Updating History flag to allow it to be printed on display - 
         historyLock = false;
         lapLock = false;
     } else if (timerStatus === "stopped") {
@@ -114,6 +134,7 @@ function startStop() {
     }
 }
 
+// Function to Show/Hide History Div - 
 function showHistory() {
     if (!isHistoryVisible) {
         document.getElementById("divHistory").style.display = "block";
@@ -123,15 +144,18 @@ function showHistory() {
         isHistoryVisible = false;
     }
     historyLock = false;
+    //Printing History onto display - 
     printHistory();
 }
 
+// Function to reset the stopWatch - 
 function reset() {
     window.clearInterval(interval);
     interval = null;
     timerStatus = "reset";
     if (!historyLock) {
         var output = + displayHours + ":" + displayMinutes + ":" + displaySeconds;
+        //Checking if Max History Limit is reached - 
         if(historyArr.length === 10){
             historyArr.splice(0,1);
             historyArr.push(output);
@@ -139,6 +163,7 @@ function reset() {
         }else{
             historyArr.push(output);
         }
+        //Saving History array in LS - 
         saveHistoryintoLS(historyArr);
         printHistory();
         historyLock = true;
@@ -147,6 +172,7 @@ function reset() {
     seconds = hours = minutes = 0;
 
     laps = [];
+    //Reseting everything and deleting all local Storage data except history array - 
     document.getElementById("display").innerHTML = "00:00:00";
     document.getElementById("start").innerHTML = "Start";
     document.getElementById("displaylap").innerHTML = "";
@@ -162,16 +188,19 @@ function reset() {
     localStorage.setItem("resetFlag", resetFlag);
 }
 
+// Function to Save history onto LS - 
 function saveHistoryintoLS(historyArr) {
     localStorage.setItem("historyArr", JSON.stringify(historyArr));
 }
 
+// Funtion to get history from LS - 
 function getHistoryfromLS() {
     if (!localStorage.historyArr) {
         localStorage.historyArr = JSON.stringify([]);
     } return JSON.parse(localStorage.historyArr);
 }
 
+// Function to print history on display - 
 function printHistory() {
     if (!historyLock) {
         document.getElementById("historyList").innerHTML = "";
@@ -183,6 +212,7 @@ function printHistory() {
     }
 }
 
+// Function to clear history from display and LS - 
 function clearHistory() {
     historyArr = [];
     localStorage.removeItem("historyArr");
@@ -195,6 +225,7 @@ function clearHistory() {
     localStorage.setItem("historyLock", historyLock);
 }
 
+// Function to record Lap - 
 function lap() {
     if (!lapLock) {
         var output = + displayHours + ":" + displayMinutes + ":" + displaySeconds;
@@ -204,16 +235,19 @@ function lap() {
     }
 }
 
+// Function to retrieve laps from LS in case of reload/reopen browser window -
 function getLapsfromLS() {
     if (!localStorage.laps) {
         localStorage.laps = JSON.stringify([]);
     } return JSON.parse(localStorage.laps);
 }
 
+// Funtion to save laps onto LS - 
 function saveLapsIntoLS(laps) {
     localStorage.setItem("laps", JSON.stringify(laps));
 }
 
+// Funtion to print laps on display - 
 function printLaps() {
     if (!lapLock) {
         document.getElementById("displaylap").innerHTML = "";
@@ -225,6 +259,7 @@ function printLaps() {
     }
 }
 
+// Function to capture window reload event and saving all data in LS - 
 window.onbeforeunload = function () {
     seconds = parseInt(displaySeconds);
     minutes = parseInt(displayMinutes);
@@ -241,6 +276,7 @@ window.onbeforeunload = function () {
     return "";
 }
 
+// Function to capture window load event and retrieving necessary data from LS - 
 window.onload = function () {
 
     if (!localStorage.timeOnClock) {
@@ -264,3 +300,5 @@ window.onload = function () {
         reset();
     }
 }
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  THE END  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
