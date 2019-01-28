@@ -287,9 +287,6 @@ window.onload = function () {
     if (timeOnClock) {
         seconds += parseInt((new Date() - new Date(timeOnClock)) / 1000);
     }
-    console.log(parseInt((new Date() - new Date(timeOnClock)) / 1000));
-    console.log(seconds);
-    console.log(timerStatus);
     printHistory(historyArr);
     printLaps(laps);
     if (timerStatus === "started") {
