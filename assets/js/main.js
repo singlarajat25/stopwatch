@@ -278,7 +278,7 @@ window.onbeforeunload = function () {
 
 // Function to capture window load event and retrieving necessary data from LS - 
 window.onload = function () {
-
+    document.body.style.backgroundImage = "url('assets/images/bg.jpg')";
     if (!localStorage.timeOnClock) {
         var timeOnClock = 0;
     } else {
